@@ -7,16 +7,22 @@ public class AlineamientoDeCadenas {
 	int[][] puntajes;
 	int[][] caminos;
 	String[] salida;
+	int puntaje = 0;
 	
 	public AlineamientoDeCadenas(String c1, String c2) {
-		puntajes = new int[c1.length()+2][c2.length()+2];
-		caminos = new int[c1.length()+2][c2.length()+2];
+		puntajes = new int[c1.length()+1][c2.length()+1];
+		caminos = new int[c1.length()+1][c2.length()+1];
 		cadena1 = c1;
 		cadena2 = c2;
 		salida = new String[2];
+		alinearCadenas();
 	}
-	
-	public String[] alinearCadenas(){
+
+	public int getPuntaje() {
+		return puntaje;
+	}
+
+	private void alinearCadenas(){
 		int num = -1;
 		puntajes[0][0] = 0;
 		for (int i = 1; i < puntajes.length; i++) {
@@ -28,15 +34,15 @@ public class AlineamientoDeCadenas {
 			num--;
 		}
 		
-		for (int i = 2; i < puntajes.length; i++) {
-			for (int j = 2; j < puntajes[0].length; j++) {
+		for (int i = 1; i < puntajes.length; i++) {
+			for (int j = 1; j < puntajes[0].length; j++) {
 				int izq = puntajes[i][j-1]-1;
 				int arr = puntajes[i-1][j]-1;
-				boolean igual = cadena1.charAt(i) == cadena2.charAt(j);
+				boolean igual = cadena1.charAt(i-1) == cadena2.charAt(j-1);
 				int diag = puntajes[i-1][j-1] + (igual ? 1 : -1);
 				int maximo = Math.max(diag,Math.max(izq, arr));
 				puntajes[i][j] = maximo;
-				if(diag == maximo && igual){
+				if(diag == maximo){
 					caminos[i][j] = 3;
 				}else if(arr == maximo){
 					caminos[i][j] = 1;
@@ -45,35 +51,57 @@ public class AlineamientoDeCadenas {
 				}
 			}
 		}
-		int[]secuencia = new int[cadena1.length()+cadena2.length()];
 		
-		int fila =cadena1.length()+1;
-		int col = cadena2.length()+1;
+		int fila =cadena1.length();
+		int col = cadena2.length();
 		String revez ="";
 		String revez2 ="";
-		
+		for (int[] is : caminos) {
+			for (int i : is) {
+				System.out.print(i);
+			}
+			System.out.println();
+		}
 		while (fila !=0 && col !=0){
 			if(	caminos[fila][col] == 3){
-				revez += cadena1.charAt(fila);
-				revez +=cadena2.charAt(col);
+				revez += cadena1.charAt(fila-1);
+				revez2 +=cadena2.charAt(col-1);
+				if (cadena1.charAt(fila-1)!=cadena2.charAt(col-1)) {
+					puntaje++;
+				}
 				fila--;
 				col--;
+				
 			}else if(caminos[fila][col] == 2){
 				revez2+="-";
-				revez+= cadena1.charAt(fila);
+				revez+= cadena1.charAt(fila-1);
 				col--;
+				puntaje++;
 			}else{
 				revez+="-";
-				revez2+= cadena1.charAt(col);
+				revez2+= cadena2.charAt(col-1);
 				fila--;
-			
+				puntaje++;
 			}
 		}
-			
-	;
-		
-		
-		
-		
+		salida[0] = invertir(revez.toCharArray());
+		salida[1] = invertir(revez2.toCharArray());
 	}
+
+	public String invertir(char[] array) {
+        char[] invertido = new char[array.length];
+        int maximo = array.length;
+ 
+        for (int i = 0; i<array.length; i++) {
+            invertido[maximo - 1] = array[i];
+            maximo--;
+        }
+        
+        return String.valueOf(invertido);
+    }
+	
+	public String[] getSalida() {
+		return salida;
+	}
+	
 }

@@ -1,0 +1,61 @@
+package main;
+
+import algorithms.AlineamientoDeCadenas;
+import fastaUtils.*;
+
+public class LecturaFASTA {
+	
+	
+	/**
+	 * Iterate over the supplied FASTA filename and print simple information to
+	 * console
+     * 
+	 * @param filename
+	 * @throws Exception
+	 */
+	private void processFASTAFile( String filename ) throws Exception {
+
+		// Instantiate a reader for the file with the supplied filename
+		FASTAReader reader = FASTAReader.getInstance( filename );
+		
+		FASTAEntry entry = reader.readNext();
+		if( entry != null ) {
+
+			/*
+			 *  A given FASTA entry may have multiple headers associated with a
+			 *  sequence. Show them all.
+			 */
+			for( FASTAHeader header : entry.getHeaders() ) {
+				System.out.println( "Got a FASTA header with name=" +
+					header.getName() + " and description=" + header.getDescription() );
+			}
+			
+			// show the sequence for this FASTA entry
+			//System.out.println( "Got this sequence for those headers: " + entry.getSequence() + "\n" );
+			
+			String c1 = entry.getSequence();
+			System.out.println("C1: "+c1);
+			entry = reader.readNext();
+			String c2 = entry.getSequence();
+			System.out.println("C1: "+c2);
+			AlineamientoDeCadenas alineador = new AlineamientoDeCadenas(c1, c2);
+			// get the next entry in the FASTA file
+			String[] salida = alineador.getSalida();
+			System.out.println("cadena 1 = \n" + salida[0] + " \n cadena 2 =\n"+ salida[1]);
+		}
+		
+	}
+	
+
+	/**
+	 * Run program, supply full path to FASTA file as first argument
+	 * @param args
+	 * @throws Exception
+	 */
+	public static void main( String[] args ) throws Exception {
+		
+		LecturaFASTA example = new LecturaFASTA();
+		example.processFASTAFile( args[ 0 ] );
+		
+	}
+}
